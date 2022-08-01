@@ -46,15 +46,15 @@ const lightpass_fs = `
     varying vec3 vNormal;
     varying vec2 oTex;
     varying mat3 vTBN;
-    uniform mat4 cameraMatrix;
     uniform vec3 uCameraPos;
-    
     uniform sampler2D uAlbedo;
     uniform sampler2D uNormal;
     
     void main(){
-       vec3 sampledNormal = normalize(vTBN * (texture2D(uNormal,oTex) * 2.0).xyz - 1.0);
-       gl_FragColor = dirlight(dirLights[0],oTex,vNormal,uAlbedo,uCameraPos, vPos);
+       vec3 color = vec3(texture2D(uAlbedo,oTex));
+       vec3 sampledNormal = normalize(vTBN * (texture2D(uNormal,oTex) * 2.0 - 1.0).xyz);
+       vec3 finalNormal = vNormal + sampledNormal; 
+       gl_FragColor = dirlight(dirLights[0],oTex,finalNormal,uAlbedo,uCameraPos, vPos);
        //gl_FragColor = vec4(1.0,0.0,1.0,1.0);
     }
 `

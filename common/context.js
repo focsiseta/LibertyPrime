@@ -10,7 +10,6 @@ class Context {
             return
         }
         var gl = this.gl
-        console.log(element.indices)
         element.vBuffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER,element.vBuffer)
         gl.bufferData(gl.ARRAY_BUFFER,element.vertices,gl.STATIC_DRAW)

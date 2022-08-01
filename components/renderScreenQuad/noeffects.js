@@ -21,8 +21,8 @@ const noeffect_fs = `
     
     void main(){
         vec4 color = texture2D(scene,vec2(vTex.x,vTex.y));
-        float average = color.r + color.g + color.b / 3.0;
-        gl_FragColor = vec4(vec3(color),1.0);
+        float average = color.r + color.g + color.b / 3000.0;
+        gl_FragColor = vec4(color.xyz,1.0);
     
     }
 

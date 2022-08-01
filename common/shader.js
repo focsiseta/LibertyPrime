@@ -42,25 +42,59 @@ class Shader {
         this.gl.attachShader(this.program, this.fragmentShader)
 
         this.gl.linkProgram(this.program)
-
-        let [attributeArray, uniformArray] = Shader.parseShaders(this.vsSource, this.fsSource)
-        this.attributes = attributeArray
-        this.uniforms = uniformArray
-        if(this.attributes != null){
+        this.gl.useProgram(this.program)
+        this.secondParser(vsSource,fsSource)
+        if(this.uniforms !== []){
+            this.uniforms.forEach((attribute) =>{
+                this.bindUniform(attribute)
+            })
+        }
+        if(this.attributes !== []){
             this.attributes.forEach((element, index) => {
                 this.bindAttribute(element, index)
             })
         }
-        if(this.uniforms != null){
-            this.uniforms.forEach((element) => {
-                if(element != null){
-                    console.log(element)
-                    this.bindUniform(element)
-                }
-            })
-            console.log(this.uniforms)
-        }
         this.configure = false
+    }
+    secondParser(vsCode,fsCode){
+        let attributes = []
+        let uniforms = []
+        let linesVS = vsCode.split("\n")
+        linesVS.forEach((line) =>{
+            if(line.includes("attribute")){
+                let subLines = line.split(" ")
+                subLines.forEach((sub) =>{
+                    if(sub.includes(";")){
+                        attributes.push(sub.substring(0,sub.length - 1))
+
+                    }
+                })
+            }
+            if(line.includes("uniform")){
+                let subLines = line.split(" ")
+                subLines.forEach((sub) =>{
+                    if(sub.includes(";")){
+                        uniforms.push(sub.substring(0,sub.length - 1))
+
+                    }
+                })
+            }
+        })
+        let linesFS = fsCode.split("\n")
+        linesFS.forEach((line) =>{
+            if(line.includes("uniform")){
+                let subLines = line.split(" ")
+                subLines.forEach((sub) =>{
+                    if(sub.includes(";") && !sub.includes("];")){
+                        uniforms.push(sub.substring(0,sub.length - 1))
+
+                    }
+                })
+            }
+        })
+        this.uniforms = uniforms
+        this.attributes = attributes
+
     }
     bindToDefaultFramebuffer(){
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,null)
@@ -125,7 +159,6 @@ class Shader {
             this.enableAttributes()
             this.setStaticUniforms()
             this.configure = true
-            console.log("here")
         }
     }
 
@@ -139,18 +172,6 @@ class Shader {
             this.bindShape(drawable)
             Shader.id_last_draw = drawable.shape.id
         }
-        /*
-        if(drawable.hasMaterial){
-            if(Shader.last_material !== drawable.material){
-                if(Shader.last_material != null){
-                    Shader.last_material.deactivate()
-                }
-                drawable.material.bindMaterial(this)
-                Shader.last_material = drawable.material
-            }
-        }
-
-         */
         this.useDrawFunction(drawable)
 
 
@@ -212,11 +233,10 @@ class Shader {
         //Utilizzato per mettere i nomi degli uniform che non vengono parsati dentro lo shader
         if(this.uniforms == null)
             this.uniforms = []
-        this.uniforms.push(id)
-        this[id] = this.gl.getUniformLocation(this.program, id)
-        if(this[id] == null){
-            this.uniLog += `Error uniform id: ${id} does not exist`
+        if(!this.uniforms.includes(id)){
+            this.uniforms.push(id)
         }
+        this[id] = this.gl.getUniformLocation(this.program, id)
     }
 
     static parseShaders(vsSource, fsSource) {
@@ -255,17 +275,9 @@ class Shader {
         return this.gl.getUniform(this.program,this[uniformName])
     }
     setUniform1Float(uniformName,data){
-        if(!this.hasOwnProperty(uniformName)){
-            this.uniLog+=`Error: ${uniformName} does not exist|`
-            return
-        }
         this.gl.uniform1f(this[uniformName],data)
     }
     setUniform1Int(uniformName,data){
-        if(!this.hasOwnProperty(uniformName)){
-            this.uniLog+=`Error: ${uniformName} does not exist|`
-            return
-        }
         this.gl.uniform1i(this[uniformName],data)
     }
 }

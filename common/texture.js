@@ -28,10 +28,9 @@ class Texture {
         }else{
             console.log("No path has been used for texture loading")
         }
-        this.gl.bindTexture(gl.TEXTURE_2D,null)
+        //this.gl.bindTexture(gl.TEXTURE_2D,null)
     }
     bind(){
-        //this.gl.activeTexture(this.gl.TEXTURE0 + this.textureUnit)
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.textureBuffer)
     }
     unbind(){
@@ -50,14 +49,25 @@ class Material{
         this.id = "Material_"+Material.counter
         Material.counter++
     }
+    bindAlbedo(shader){
+        if(this.hasAlbedo){
+            shader.gl.activeTexture(shader.gl.TEXTURE0)
+            this.albedoTexture.bind()
+        }
+    }
+    bindNormal(shader){
+        if(this.hasNormalMap){
+            //console.log("here normal map")
+            shader.gl.activeTexture(shader.gl.TEXTURE1)
+            this.normalMap.bind()
+        }
+    }
     bindMaterial(shader) {
         if (this.hasAlbedo) {
-            this.albedoTexture.bind()
-            shader.setUniform1Int("uAlbedo",this.albedoTexture.textureUnit)
+                this.bindAlbedo(shader)
         }
         if (this.hasNormalMap) {
-            this.normalMap.bind()
-            shader.setUniform1Int("uNormal",this.normalMap.textureUnit)
+            this.bindNormal(shader)
         }
     }
     deactivate(){

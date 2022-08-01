@@ -6,9 +6,9 @@ function main(){
         -1, 1, 0.0,-1, -1, 0.0, // right
         1, 1, 0.0,  -1, -1, 0.0, // left
         1, -1, 0.0, 1, 1, 0.0] // top  ]
-    quad = new Element("quad",wholeScreen)
-    c.loadElement(triangle)
-    c.loadElement(quad)
+    //quad = new Element("quad",wholeScreen)
+    //c.loadElement(triangle)
+    //c.loadElement(quad)
     var gl = c.gl
     gl.enable(gl.DEPTH_TEST)
     gl.clearColor(0,0,0,0.8)

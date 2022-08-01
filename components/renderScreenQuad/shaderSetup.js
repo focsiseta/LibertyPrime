@@ -12,12 +12,12 @@ function flatQuadST(c = new Context()){
             0,1,0,
             0,1,0
             ,0,1,0],
-        [0,1,2,2,3,0],
+        [2,1,0,2,3,0],
         [0, 1, 0, 0, 1, 0, 1, 1])
     c.loadElement(quad)
     let vertexShader = new ShaderSource(noeffects_vs)
     let fragmentShader = new ShaderSource(noeffect_fs)
-    let startDate = new Date().getMilliseconds()
+    let startDate = new Date().getTime()
     let noeffectShader = c.spawnShader(vertexShader.source,fragmentShader.source,"noeffect")
     noeffectShader.setEnableAttrFunc((shader) =>{
         let gl = shader.gl
@@ -37,8 +37,11 @@ function flatQuadST(c = new Context()){
     noeffectShader.setDrawFunction((shader,drawable) =>{
         let gl = shader.gl
         //gl.drawArrays(drawable.drawType,drawable.vBuffer,3)
-        shader.setUniform1Float("uTime", new Date().getMilliseconds() - startDate)
+        console.log((new Date().getTime() - startDate) / 10000)
+        shader.setUniform1Float("uTime", (new Date().getTime() - startDate) / 10000)
         gl.drawElements(gl[drawable.shape.drawType],drawable.shape.indices.length,gl.UNSIGNED_SHORT,0)
     })
+    noeffectShader.useProgram()
+    noeffectShader.setUniform1Int("scene",0)
     return noeffectShader
 }
