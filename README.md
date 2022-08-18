@@ -1,7 +1,10 @@
 # LibertyPrime
 
-LibertyPrime is an attempt to create a simple library to build WebGL things
-
-Framebuffers are the latest feature added, you can check how to get started in the various mains and /components files
+LibertyPrime is an attempt to create a simple library to build WebGL things and I'm using it as base for my CG uni project
 
 I will write some sort of documentation sometime in the future 
+
+
+# Bugs
+
+  . Shader's attribute/uniforms parser somehow doesn't like commented out attributes like "//attribute vec3 aPos;", I've already fixed it in the project itself, but I've still have to do it here :P
